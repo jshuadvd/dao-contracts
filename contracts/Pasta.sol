@@ -121,7 +121,9 @@ contract Pasta {
         uint96 amtToRedeem = (amount > balances[msg.sender]) ? balances[msg.sender] : amount;
 
         balances[dst] = sub96(balances[dst], amtToRedeem, "Pasta::burn: burn amount underflows");
-        totalSupply = add256(totalSupply, uint256(amtToRedeem));
+        totalSupply = sub256(totalSupply, uint256(amtToRedeem));
+
+        require(food.transfer(dst, rawAmount), "Pasta::burn: transfer failed");
 
         _moveDelegates(delegates[dst], address(0), amtToRedeem);
 

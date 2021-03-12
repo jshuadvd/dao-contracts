@@ -165,8 +165,7 @@ contract GovernorAlpha is DSMath {
     /// @notice An event emitted when a proposal has been executed in the Timelock
     event ProposalExecuted(uint id);
 
-    constructor(address timelock_, address pasta_, address guardian_) public {
-        timelock = TimelockInterface(timelock_);
+    constructor(address pasta_, address guardian_) public {
         pasta = PastaInterface(pasta_);
         guardian = guardian_;
     }
@@ -349,6 +348,11 @@ contract GovernorAlpha is DSMath {
     function __executeSetTimelockPendingAdmin(address newPendingAdmin, uint eta) public {
         require(msg.sender == guardian, "GovernorAlpha::__executeSetTimelockPendingAdmin: sender must be gov guardian");
         timelock.executeTransaction(address(timelock), 0, "setPendingAdmin(address)", abi.encode(newPendingAdmin), eta);
+    }
+
+    function __setTimelock(address timelock_) public {
+        require(address(timelock) == address(0) && msg.sender == guardian);
+        timelock = TimelockInterface(timelock_);
     }
 
     function getChainId() internal pure returns (uint) {
